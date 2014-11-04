@@ -11,7 +11,7 @@
 #if defined (NM73131_0_BOARD)
 #define SDIO_MODALIAS "wilc_sdio"
 #else
-#define SDIO_MODALIAS "nmc1000_sdio"
+#define SDIO_MODALIAS "wilc1000_sdio"
 #endif
 
 #ifdef WILC_ASIC_A0
@@ -34,7 +34,7 @@
 #elif defined (PLAT_RKXXXX)
 #define MAX_SPEED 50000000
 #else
-#define MAX_SPEED 50000000
+#define MAX_SPEED 30000000 //default 50000000
 #endif
 #else /* WILC_ASIC_A0 */
 /* Limit clk to 6MHz on FPGA. */
@@ -44,7 +44,7 @@
 
 struct sdio_func* local_sdio_func = NULL;
 extern linux_wlan_t* g_linux_wlan;
-extern int nmc_netdev_init(void);
+extern int wilc_netdev_init(void);
 extern int sdio_clear_int(void);
 extern void wilc_handle_isr(void);
 
@@ -69,7 +69,7 @@ static void wilc_sdio_interrupt(struct sdio_func *func)
 
 
 int linux_sdio_cmd52(sdio_cmd52_t *cmd){
-	struct sdio_func *func = g_linux_wlan->nmc_sdio_func;
+	struct sdio_func *func = g_linux_wlan->wilc_sdio_func;
 	int ret;
 	u8 data;
 
@@ -100,7 +100,7 @@ int linux_sdio_cmd52(sdio_cmd52_t *cmd){
 
 
  int linux_sdio_cmd53(sdio_cmd53_t *cmd){
-	struct sdio_func *func = g_linux_wlan->nmc_sdio_func;
+	struct sdio_func *func = g_linux_wlan->wilc_sdio_func;
 	int size, ret;
 
 	sdio_claim_host(func);
@@ -144,7 +144,7 @@ static int linux_sdio_probe(struct sdio_func *func, const struct sdio_device_id 
 #endif
 	PRINT_D(INIT_DBG,"Initializing netdev\n");
 	local_sdio_func = func;
-	if(nmc_netdev_init()){
+	if(wilc_netdev_init()){
 		PRINT_ER("Couldn't initialize netdev\n");
 		return -1;
 	}
@@ -159,7 +159,7 @@ static void linux_sdio_remove(struct sdio_func *func)
 	
 }
 
-struct sdio_driver nmc_bus = {
+struct sdio_driver wilc_bus = {
 	.name		= SDIO_MODALIAS,
 	.id_table	= wilc_sdio_ids,
 	.probe		= linux_sdio_probe,
@@ -229,7 +229,7 @@ int linux_sdio_init(void* pv){
 
 #if defined(PLAT_AML8726_M3)
 //[[ rachel - copy from v.3.0 (by johnny)
- #ifdef NMC1000_SINGLE_TRANSFER
+ #ifdef WILC1000_SINGLE_TRANSFER
  #define WILC_SDIO_BLOCK_SIZE 256
  #else
  #define WILC_SDIO_BLOCK_SIZE 512
@@ -258,7 +258,7 @@ int linux_sdio_init(void* pv){
 }
 
 void linux_sdio_deinit(void *pv){
-	sdio_unregister_driver(&nmc_bus);
+	sdio_unregister_driver(&wilc_bus);
 }
 
 int linux_sdio_set_max_speed(void)

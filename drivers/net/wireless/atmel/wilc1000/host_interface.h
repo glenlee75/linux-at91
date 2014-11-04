@@ -466,7 +466,7 @@ typedef struct
 	WILC_TimerHandle hRemainOnChannel;
 	#endif
 
-	WILC_Bool IPaddrObtained;
+	WILC_Bool IFC_UP;
 }tstrWILC_WFIDrv;
 
 /*!
@@ -876,7 +876,7 @@ WILC_Sint32 host_int_set_join_req(WILC_WFIDrvHandle hWFIDrv, WILC_Uint8* pu8bssi
 
 /**
 *  @brief 		Flush a join request parameters to FW, but actual connection
-*  @details 	The function is called in situation where NMC is connected to AP and 
+*  @details 	The function is called in situation where WILC is connected to AP and 
 			required to switch to hybrid FW for P2P connection 	
 *  @param[in] handle to the wifi driver,
 *  @return 		Error code indicating success/failure

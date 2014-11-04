@@ -4,7 +4,7 @@
 #include "wilc_type.h"
 
 
-#define ISNMC1000(id)   (((id & 0xfffff000) == 0x100000) ? 1 : 0) 
+#define ISWILC1000(id)   (((id & 0xfffff000) == 0x100000) ? 1 : 0) 
 
 
 /********************************************
@@ -121,7 +121,7 @@
 #define rHAVE_EXT_PA_INV_TX_RX_BIT   (4)
 #define rHAVE_LEGACY_RF_SETTINGS_BIT (5)
 #define rHAVE_XTAL_24_BIT            (6)
-#define rHAVE_DISABLE_NMC_UART_BIT   (7)
+#define rHAVE_DISABLE_WILC_UART_BIT   (7)
 
 
 #define WILC_HAVE_SDIO_IRQ_GPIO       (1 << rHAVE_SDIO_IRQ_GPIO_BIT)
@@ -131,7 +131,7 @@
 #define WILC_HAVE_EXT_PA_INV_TX_RX    (1 << rHAVE_EXT_PA_INV_TX_RX_BIT)
 #define WILC_HAVE_LEGACY_RF_SETTINGS  (1 << rHAVE_LEGACY_RF_SETTINGS_BIT)
 #define WILC_HAVE_XTAL_24             (1 << rHAVE_XTAL_24_BIT)
-#define WILC_HAVE_DISABLE_NMC_UART    (1 << rHAVE_DISABLE_NMC_UART_BIT)
+#define WILC_HAVE_DISABLE_WILC_UART    (1 << rHAVE_DISABLE_WILC_UART_BIT)
 
 
 /********************************************

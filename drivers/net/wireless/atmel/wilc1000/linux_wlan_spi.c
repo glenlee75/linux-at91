@@ -32,19 +32,19 @@
 
 static uint32_t SPEED = MIN_SPEED;
 
-struct spi_device* nmc_spi_dev;
+struct spi_device* wilc_spi_dev;
 void linux_spi_deinit(void* vp);
 
-static int __init nmc_bus_probe(struct spi_device* spi){
+static int __init wilc_bus_probe(struct spi_device* spi){
 	
 	PRINT_D(BUS_DBG,"spiModalias: %s\n",spi->modalias);
 	PRINT_D(BUS_DBG,"spiMax-Speed: %d\n",spi->max_speed_hz);
-	nmc_spi_dev = spi;
+	wilc_spi_dev = spi;
 	
 	return 0;
 }
 
-static int __devexit nmc_bus_remove(struct spi_device* spi){
+static int __devexit wilc_bus_remove(struct spi_device* spi){
 	
 		//linux_spi_deinit(NULL);
 	
@@ -52,18 +52,18 @@ static int __devexit nmc_bus_remove(struct spi_device* spi){
 }
 
 
-struct spi_driver nmc_bus __refdata = {
+struct spi_driver wilc_bus __refdata = {
 		.driver = {
 				.name = MODALIAS,
 		},
-		.probe =  nmc_bus_probe,
-		.remove = __devexit_p(nmc_bus_remove),
+		.probe =  wilc_bus_probe,
+		.remove = __devexit_p(wilc_bus_remove),
 };
 
 
 void linux_spi_deinit(void* vp){
 	
-		spi_unregister_driver(&nmc_bus);	
+		spi_unregister_driver(&wilc_bus);	
 		
 		SPEED = MIN_SPEED;
 		PRINT_ER("@@@@@@@@@@@@ restore SPI speed to %d @@@@@@@@@\n", SPEED);
@@ -79,10 +79,10 @@ int linux_spi_init(void* vp){
 	
 	if(called == 0){
 		called++;
-		if(&nmc_bus == NULL){
-			PRINT_ER("nmc_bus address is NULL\n");
+		if(&wilc_bus == NULL){
+			PRINT_ER("wilc_bus address is NULL\n");
 		}
-		ret = spi_register_driver(&nmc_bus);		
+		ret = spi_register_driver(&wilc_bus);		
 	}
 
 	/* change return value to match WILC interface */
@@ -91,7 +91,7 @@ int linux_spi_init(void* vp){
 	return ret;
 }
 
-#if defined(PLAT_WMS8304)			// rachel
+#if defined(PLAT_WMS8304)
 #define TXRX_PHASE_SIZE (4096)
 #endif
 
@@ -113,7 +113,7 @@ int linux_spi_write(uint8_t* b, uint32_t len){
 	
 		spi_message_init(&msg);
 		spi_message_add_tail(&tr,&msg);
-		ret = spi_sync(nmc_spi_dev,&msg);
+		ret = spi_sync(wilc_spi_dev,&msg);
 		if(ret < 0){
 			PRINT_ER( "SPI transaction failed\n");
 		}
@@ -168,11 +168,11 @@ int linux_spi_write(uint8_t* b, uint32_t len){
 				
 				memset(&msg, 0, sizeof(msg));
 				spi_message_init(&msg);
-				msg.spi = nmc_spi_dev;
-				msg.is_dma_mapped = USE_SPI_DMA;			// rachel
+				msg.spi = wilc_spi_dev;
+				msg.is_dma_mapped = USE_SPI_DMA;
 
 				spi_message_add_tail(&tr, &msg);
-				ret = spi_sync(nmc_spi_dev, &msg);
+				ret = spi_sync(wilc_spi_dev, &msg);
 				if(ret < 0) {
 					PRINT_ER( "SPI transaction failed\n");
 				}
@@ -202,11 +202,11 @@ int linux_spi_write(uint8_t* b, uint32_t len){
 
 			memset(&msg, 0, sizeof(msg));
 			spi_message_init(&msg);
-			msg.spi = nmc_spi_dev;
+			msg.spi = wilc_spi_dev;
 			msg.is_dma_mapped = USE_SPI_DMA;				// rachel
 
 			spi_message_add_tail(&tr, &msg);
-			ret = spi_sync(nmc_spi_dev, &msg);
+			ret = spi_sync(wilc_spi_dev, &msg);
 			if(ret < 0) {
 				PRINT_ER( "SPI transaction failed\n");
 			}
@@ -250,12 +250,12 @@ int linux_spi_write(uint8_t* b, uint32_t len){
 		memset(&msg, 0, sizeof(msg));
 		spi_message_init(&msg);
 //[[johnny add
-		msg.spi = nmc_spi_dev;
-		msg.is_dma_mapped = USE_SPI_DMA;      // rachel
+		msg.spi = wilc_spi_dev;
+		msg.is_dma_mapped = USE_SPI_DMA;
 //]]
 		spi_message_add_tail(&tr,&msg);
 		
-		ret = spi_sync(nmc_spi_dev,&msg);
+		ret = spi_sync(wilc_spi_dev,&msg);
 		if(ret < 0){
 			PRINT_ER( "SPI transaction failed\n");
 		}
@@ -294,7 +294,7 @@ int linux_spi_read(unsigned char*rb, unsigned long rlen){
 
 		spi_message_init(&msg);
 		spi_message_add_tail(&tr,&msg);
-		ret = spi_sync(nmc_spi_dev,&msg);
+		ret = spi_sync(wilc_spi_dev,&msg);
 		if(ret < 0){
 			PRINT_ER("SPI transaction failed\n");
 		}
@@ -342,11 +342,11 @@ int linux_spi_read(unsigned char*rb, unsigned long rlen){
 				
 				memset(&msg, 0, sizeof(msg));
 				spi_message_init(&msg);
-				msg.spi = nmc_spi_dev;
-				msg.is_dma_mapped = USE_SPI_DMA;					// rachel
+				msg.spi = wilc_spi_dev;
+				msg.is_dma_mapped = USE_SPI_DMA;
 
 				spi_message_add_tail(&tr, &msg);
-				ret = spi_sync(nmc_spi_dev, &msg);
+				ret = spi_sync(wilc_spi_dev, &msg);
 				if(ret < 0) {
 					PRINT_ER( "SPI transaction failed\n");
 				}
@@ -375,11 +375,11 @@ int linux_spi_read(unsigned char*rb, unsigned long rlen){
 			//printk("  read remain, %d bytes\n", remainder);
 			memset(&msg, 0, sizeof(msg));
 			spi_message_init(&msg);
-			msg.spi = nmc_spi_dev;
+			msg.spi = wilc_spi_dev;
 			msg.is_dma_mapped = USE_SPI_DMA;				// rachel
 
 			spi_message_add_tail(&tr, &msg);
-			ret = spi_sync(nmc_spi_dev, &msg);
+			ret = spi_sync(wilc_spi_dev, &msg);
 			if(ret < 0) {
 				PRINT_ER( "SPI transaction failed\n");
 			}
@@ -421,12 +421,12 @@ int linux_spi_read(unsigned char*rb, unsigned long rlen){
 		memset(&msg, 0, sizeof(msg));
 		spi_message_init(&msg);
 //[[ johnny add
-		msg.spi = nmc_spi_dev;
-		msg.is_dma_mapped = USE_SPI_DMA;      // rachel
+		msg.spi = wilc_spi_dev;
+		msg.is_dma_mapped = USE_SPI_DMA;
 //]]
 		spi_message_add_tail(&tr,&msg);
 
-		ret = spi_sync(nmc_spi_dev,&msg);
+		ret = spi_sync(wilc_spi_dev,&msg);
 		if(ret < 0){
 			PRINT_ER("SPI transaction failed\n");
 		}
@@ -460,13 +460,13 @@ int linux_spi_write_read(unsigned char*wb, unsigned char*rb, unsigned int rlen)
 
 		};
 
-		memset(&msg, 0, sizeof(msg));		// rachel
+		memset(&msg, 0, sizeof(msg));
 		spi_message_init(&msg);
-		msg.spi = nmc_spi_dev;			// rachel
-		msg.is_dma_mapped = USE_SPI_DMA;			// rachel for DMA
+		msg.spi = wilc_spi_dev;
+		msg.is_dma_mapped = USE_SPI_DMA;
 		
 		spi_message_add_tail(&tr,&msg);
-		ret = spi_sync(nmc_spi_dev,&msg);
+		ret = spi_sync(wilc_spi_dev,&msg);
 		if(ret < 0){
 			PRINT_ER("SPI transaction failed\n");
 		}

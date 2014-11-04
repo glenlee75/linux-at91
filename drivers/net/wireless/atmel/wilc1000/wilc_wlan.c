@@ -21,7 +21,7 @@ extern wilc_hif_func_t hif_sdio;
 extern wilc_hif_func_t hif_spi;
 extern wilc_cfg_func_t mac_cfg;
 #if defined(PLAT_RK3026_TCHIP)
-extern WILC_Uint8 g_nmc_initialized; //AMR : 0422 RK3026 Crash issue
+extern WILC_Uint8 g_wilc_initialized; //AMR : 0422 RK3026 Crash issue
 #endif
 extern void WILC_WFI_mgmt_rx(uint8_t *buff, uint32_t size);
 extern void frmw_to_linux(uint8_t *buff, uint32_t size);
@@ -545,6 +545,21 @@ static int wilc_wlan_txq_filter_dup_tcp_ack(void)
 	return 1;
 }
 #endif
+
+#ifdef TCP_ENHANCEMENTS
+WILC_Bool EnableTCPAckFilter = WILC_FALSE;
+
+void Enable_TCP_ACK_Filter(WILC_Bool value)
+{
+	EnableTCPAckFilter = value;
+}
+
+WILC_Bool is_TCP_ACK_Filter_Enabled()
+{
+	return EnableTCPAckFilter;
+}
+#endif
+
 static int wilc_wlan_txq_add_cfg_pkt(uint8_t *buffer, uint32_t buffer_size)
 {
 	wilc_wlan_dev_t *p = (wilc_wlan_dev_t *)&g_wlan;
@@ -604,6 +619,9 @@ static int wilc_wlan_txq_add_net_pkt(void *priv, uint8_t *buffer, uint32_t buffe
 	PRINT_D(TX_DBG,"Adding mgmt packet at the Queue tail\n");	
 #ifdef TCP_ACK_FILTER
 	tqe->tcp_PendingAck_index=NOT_TCP_ACK;
+#ifdef TCP_ENHANCEMENTS
+	if (is_TCP_ACK_Filter_Enabled() == WILC_TRUE)
+#endif
 	tcp_process(tqe);
 #endif
 	wilc_wlan_txq_add_to_tail(tqe);
@@ -1452,7 +1470,7 @@ static void wilc_pllupdate_isr_ext(uint32_t int_stats){
 	g_wlan.os_func.os_atomic_sleep(WILC_PLL_TO);
 	
 	//poll till read a valid data
-	while(!(ISNMC1000(wilc_get_chipid(WILC_TRUE))&&--trials)) {
+	while(!(ISWILC1000(wilc_get_chipid(WILC_TRUE))&&--trials)) {
 		printk("PLL update retrying\n");
 		g_wlan.os_func.os_atomic_sleep(1);		
 	}
@@ -1560,7 +1578,9 @@ _end_:
 #endif
 		}
 	}
-	
+#ifdef TCP_ENHANCEMENTS
+	wilc_wlan_handle_rxq();
+#endif
 }
 
 void wilc_handle_isr(void)
@@ -1756,8 +1776,8 @@ static int wilc_wlan_start(void)
 
 /*BugID_5271*/
 /*Enable/Disable GPIO configuration for FW logs*/
-#ifdef DISABLE_NMC_UART
-	reg |= WILC_HAVE_DISABLE_NMC_UART;
+#ifdef DISABLE_WILC_UART
+	reg |= WILC_HAVE_DISABLE_WILC_UART;
 #endif
 
 	ret = p->hif_func.hif_write_reg(WILC_GP_REG_1, reg);
@@ -2209,7 +2229,7 @@ uint32_t wilc_get_chipid(uint8_t update)
 	if(chipid == 0 || update != 0) {		
 		g_wlan.hif_func.hif_read_reg(0x1000,&tempchipid);
 		g_wlan.hif_func.hif_read_reg(0x13f4,&rfrevid);
-		if(!ISNMC1000(tempchipid)) {
+		if(!ISWILC1000(tempchipid)) {
 			chipid = 0;
 			goto _fail_;
 		} 
@@ -2290,7 +2310,7 @@ int wilc_wlan_init(wilc_wlan_inp_t *inp, wilc_wlan_oup_t *oup)
 		host interface init
 	**/
 #if defined(PLAT_RK3026_TCHIP) //AMR : 0422 RK3026 Crash issue
-	if(!g_nmc_initialized)
+	if(!g_wilc_initialized)
 	{
 		custom_lock_bus(g_mac_open);	
 		custom_wakeup(g_mac_open);
@@ -2413,7 +2433,7 @@ int wilc_wlan_init(wilc_wlan_inp_t *inp, wilc_wlan_oup_t *oup)
 #endif
 
 #if defined(PLAT_RK3026_TCHIP) //AMR : 0422 RK3026 Crash issue
-	if(!g_nmc_initialized)
+	if(!g_wilc_initialized)
 		custom_unlock_bus(g_mac_open);
 #endif
 
@@ -2439,7 +2459,7 @@ _fail_:
 #endif
 
 #if defined(PLAT_RK3026_TCHIP) //AMR : 0422 RK3026 Crash issue
-	if(!g_nmc_initialized)
+	if(!g_wilc_initialized)
 		custom_unlock_bus(g_mac_open);
 #endif
 

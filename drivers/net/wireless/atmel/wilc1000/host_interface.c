@@ -13,7 +13,7 @@ extern WILC_TimerHandle hDuringIpTimer;
 
 extern WILC_Bool bEnablePS;
 /*BugID_5137*/
-extern WILC_Uint8 g_nmc_initialized;
+extern WILC_Uint8 g_wilc_initialized;
 /*****************************************************************************/
 /*								Macros										 */
 /*****************************************************************************/ 
@@ -1343,7 +1343,7 @@ static WILC_Sint32 Handle_CfgParam(void * drvHandler,tstrHostIFCfgParamAttr* str
 static WILC_Sint32 Handle_wait_msg_q_empty(void)
 {
 	WILC_Sint32 s32Error = WILC_SUCCESS;
-	g_nmc_initialized = 0;
+	g_wilc_initialized = 0;
 	WILC_SemaphoreRelease(&hWaitResponse, NULL);
 	return s32Error;
 }
@@ -2785,7 +2785,7 @@ static WILC_Sint32 Handle_RcvdGnrlAsyncInfo(void * drvHandler,tstrRcvdGnrlAsyncI
 				pstrWFIDrv->enuHostIFstate = HOST_IF_CONNECTED;
 
 				#ifdef DISABLE_PWRSAVE_AND_SCAN_DURING_IP
-				PRINT_D(GENERIC_DBG,"during ip, scan disabled\n");
+				PRINT_D(GENERIC_DBG,"Obtaining an IP, Disable Scan\n");
 				g_obtainingIP=WILC_TRUE;
 				WILC_TimerStart(&hDuringIpTimer, 10000, WILC_NULL, WILC_NULL);
 				#endif
@@ -4737,7 +4737,7 @@ static void hostIFthread(void* pvArg)
 
 
 		/*Re-Queue HIF message*/
-		if((!g_nmc_initialized))
+		if((!g_wilc_initialized))
 		{
 			PRINT_D(GENERIC_DBG, "--WAIT--");
 			WILC_Sleep(200);
@@ -6080,7 +6080,7 @@ WILC_Sint32 host_int_set_join_req(WILC_WFIDrvHandle hWFIDrv, WILC_Uint8* pu8bssi
 
 /**
 *  @brief 		Flush a join request parameters to FW, but actual connection
-*  @details 	The function is called in situation where NMC is connected to AP and 
+*  @details 	The function is called in situation where WILC is connected to AP and 
 			required to switch to hybrid FW for P2P connection 	
 *  @param[in] handle to the wifi driver,
 *  @return 	Error code indicating success/failure

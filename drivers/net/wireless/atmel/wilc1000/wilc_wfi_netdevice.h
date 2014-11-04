@@ -117,7 +117,7 @@ struct WILC_WFI_stats
 #if defined (NM73131_0_BOARD)
 #define RX_BH_TYPE  RX_BH_KTHREAD
 #else
-#define RX_BH_TYPE  RX_BH_WORK_QUEUE
+#define RX_BH_TYPE  RX_BH_THREADED_IRQ
 #endif
 
 struct wilc_wfi_key {
@@ -199,7 +199,8 @@ struct WILC_WFI_priv {
 	WILC_SemaphoreHandle hSemScanReq;
 	//
 	WILC_Bool gbAutoRateAdjusted;
-	
+
+	WILC_Bool bInP2PlistenState;
 	
 };
 
@@ -216,11 +217,11 @@ typedef struct{
 uint8_t aSrcAddress[ETH_ALEN];
 uint8_t aBSSID[ETH_ALEN];
 uint32_t drvHandler;
-struct net_device* nmc_netdev;
+struct net_device* wilc_netdev;
 }tstrInterfaceInfo;
 typedef struct{
 	int mac_status;
-	int nmc1000_initialized;
+	int wilc1000_initialized;
 
 	
 	#if (!defined WILC_SDIO) || (defined WILC_SDIO_IRQ_GPIO)
@@ -266,14 +267,14 @@ typedef struct{
 	unsigned char eth_src_address[NUM_CONCURRENT_IFC][6];
 	//unsigned char eth_dst_address[6];
 
-	const struct firmware* nmc_firmware; /* Bug 4703 */
+	const struct firmware* wilc_firmware; /* Bug 4703 */
 
 	struct net_device* real_ndev;
 #ifdef WILC_SDIO
 	int already_claim;
-	struct sdio_func* nmc_sdio_func;
+	struct sdio_func* wilc_sdio_func;
 #else
-	struct spi_device* nmc_spidev;
+	struct spi_device* wilc_spidev;
 #endif
 
 } linux_wlan_t;
@@ -287,7 +288,7 @@ typedef struct
 	#ifdef WILC_P2P
 	struct_frame_reg g_struct_frame_reg[num_reg_frame];
 	#endif
-struct net_device* nmc_netdev;
+struct net_device* wilc_netdev;
 struct net_device_stats netstats; 
 
 }perInterface_wlan_t;

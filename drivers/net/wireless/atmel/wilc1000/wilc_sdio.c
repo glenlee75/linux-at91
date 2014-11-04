@@ -11,7 +11,7 @@
 #include "wilc_wlan.h"
 
 
-#ifdef NMC1000_SINGLE_TRANSFER
+#ifdef WILC1000_SINGLE_TRANSFER
 #define WILC_SDIO_BLOCK_SIZE 256
 #else
  #if defined(PLAT_AML8726_M3) //johnny
@@ -335,7 +335,7 @@ static int sdio_write(uint32_t addr, uint8_t *buf, uint32_t size)
 		cmd.function = 0;
 		cmd.address = 0x10f;
 	} else {
-#ifdef NMC1000_SINGLE_TRANSFER
+#ifdef WILC1000_SINGLE_TRANSFER
 		/**
 			has to be block aligned...
 		**/
@@ -366,7 +366,7 @@ static int sdio_write(uint32_t addr, uint8_t *buf, uint32_t size)
 
 	if (nblk > 0) {
   
-#if defined(PLAT_AML8726_M3_BACKUP) //johnny // rachel
+#if defined(PLAT_AML8726_M3_BACKUP) //johnny
 		int i;
 
 		for(i=0; i<nblk; i++)
@@ -593,7 +593,7 @@ static int sdio_read(uint32_t addr, uint8_t *buf, uint32_t size)
 		cmd.function = 0;
 		cmd.address = 0x10f;
 	} else {
-#ifdef NMC1000_SINGLE_TRANSFER
+#ifdef WILC1000_SINGLE_TRANSFER
 		/**
 			has to be block aligned...
 		**/
@@ -624,7 +624,7 @@ static int sdio_read(uint32_t addr, uint8_t *buf, uint32_t size)
 
 	if (nblk > 0) {
 
-#if defined(PLAT_AML8726_M3_BACKUP) //johnny // rachel
+#if defined(PLAT_AML8726_M3_BACKUP) //johnny
 
 		int i;
 

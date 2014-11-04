@@ -1,5 +1,5 @@
 extern struct sdio_func *local_sdio_func;
-extern struct sdio_driver nmc_bus;
+extern struct sdio_driver wilc_bus;
 
 #include <linux/mmc/sdio_func.h>
 

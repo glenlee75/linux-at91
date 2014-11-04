@@ -14,6 +14,7 @@
 /*bug 3887: [AP] Allow Management frames to be passed to the host*/
 #define WILC_AP_EXTERNAL_MLME 
 #define WILC_P2P
+#define TCP_ENHANCEMENTS
 //#define MEMORY_STATIC
 //#define WILC_FULLY_HOSTING_AP
 //#define USE_OLD_SPI_SW

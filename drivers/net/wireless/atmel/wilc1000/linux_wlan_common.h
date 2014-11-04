@@ -42,10 +42,10 @@ enum debug_region{
 #define MEM_DBG		  		(1<<Mem_debug)
 #define FIRM_DBG	  		(1<<Firmware_debug)
 
-#if defined (NMC_DEBUGFS)
+#if defined (WILC_DEBUGFS)
 extern void kmsgdump_write(char *fmt, ...);
-extern int nmc_debugfs_init(void);
-extern void nmc_debugfs_remove(void);
+extern int wilc_debugfs_init(void);
+extern void wilc_debugfs_remove(void);
 
 extern atomic_t REGION;
 extern atomic_t DEBUG_LEVEL;
@@ -109,17 +109,17 @@ extern atomic_t DEBUG_LEVEL;
 
 #if defined (NM73131_0_BOARD)
 
-#define MODALIAS "nmc_spi"
-#define GPIO_NUM	IRQ_NMC1000_GPIO
+#define MODALIAS "wilc_spi"
+#define GPIO_NUM	IRQ_WILC1000_GPIO
 
 #elif defined (BEAGLE_BOARD)
 	#define SPI_CHANNEL	4
 	
 	#if SPI_CHANNEL == 4
-		#define MODALIAS 	"nmc_spi4"
+		#define MODALIAS 	"wilc_spi4"
 		#define GPIO_NUM	162
 	#else
-		#define MODALIAS 	"nmc_spi3"
+		#define MODALIAS 	"wilc_spi3"
 		#define GPIO_NUM	133
 	#endif
 #elif defined(PANDA_BOARD)

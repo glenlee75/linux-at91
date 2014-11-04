@@ -125,4 +125,11 @@ int WILC_WFI_InitHostInt(struct net_device *net);
 void WILC_WFI_monitor_rx(uint8_t *buff, uint32_t size);
 int WILC_WFI_deinit_mon_interface(void);
 struct net_device * WILC_WFI_init_mon_interface(char *name, struct net_device *real_dev );
+
+#ifdef TCP_ENHANCEMENTS
+#define TCP_ACK_FILTER_LINK_SPEED_THRESH 54
+#define DEFAULT_LINK_SPEED 72
+extern void Enable_TCP_ACK_Filter(WILC_Bool value);
+#endif
+
 #endif
